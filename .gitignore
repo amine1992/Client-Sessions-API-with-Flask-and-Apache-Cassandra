@@ -1,0 +1,7 @@
+app/__pycache__/
+app/main/__pycache__/
+app/main/models/__pycache__/
+app/main/persistance/__pycache__/
+app/main/services/__pycache__/
+app/main/routes/__pycache__/
+app/main/handlers/__pycache__/

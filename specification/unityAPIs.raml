@@ -1,0 +1,110 @@
+#%RAML 1.0
+title: Sessions APIs
+description: Unity assignment Services
+version: v1
+baseUri: http://localhost:5000
+protocols: [ HTTP ]
+mediaType: application/json
+types:
+
+	CompleteEvent:
+		properties:
+			session_id: string
+            player_id: string
+            ts: datetime-only
+            event: string
+            country: string
+
+	EventStart:
+        properties:
+            session_id: string
+            player_id: string
+            ts: datetime-only
+
+    EventStartCountry:
+    	properties:
+    		country_name:eventStart[]
+
+    PlayerSessions:
+    	properties:
+    		players_id: string[]
+
+
+/unity/batches
+    description: Insert events with batches. The field "country" will take "None" if not defined.
+    post:
+  		description: batches of event
+  		type:        CompleteEvent[]
+  		required:    true
+  		example:     [{
+                		"session_id": "674606b1-2270-4285-928f-eef4a6b90a60", 
+                		"player_id": "d6313e1fb7d247a6a034e2aadc30ab30", 
+                		"ts": "2019-11-22T20:40:50",
+                		"country": "PK", 
+                		"event": "start"	
+                	},
+					{
+						"session_id": "16ca9d01-d240-4527-9f8f-00ef6cddb1d4", 
+						"player_id": "20ac16ebb30a477087c3c7501b1fce73", 
+						"ts": "2016-11-18T06:24:50",
+						"event": "end", 	
+                    }]
+        responses:
+            200:
+                body:
+                    type: string
+                    example:
+                        {"message": "success insertion"}
+                        	
+
+
+/unity/last-events:
+  	description: fetch session starts for the last X hours for each country
+  	get:
+    	queryParameters:
+      		hours:
+          		description: number of hours from now to fetch start sessions
+          		type:        int
+          		required:    true
+          		example:     50800
+    	responses:
+      		200:
+        		body:
+          			type: EventStartCountry
+        			example:
+          			value:
+                	{
+    				"JE": [
+					        {
+					            "session_id": "7d8be85a-2fbf-47c1-b72b-e2e003c13c87",
+					            "player_id": "220d350a742d4adf9b2f49de6e223c82",
+					            "ts": "2016-11-02T14:56:46"
+					        },
+					        {
+					            "session_id": "7d8be85a-2fbf-47c1-b72b-e2e003c13c87",
+					            "player_id": "220d350a742d4adf9b2f49de6e223c82",
+					            "ts": "2016-11-02T14:56:46"
+					        }
+					      ],
+					"UK": []
+				 	}
+
+/unity/last-sessions-player:
+  	description: fetch last 20 complete sessions for a given player
+  	get:
+    	queryParameters:
+      		player_id:
+          		description: id of the player
+          		type:        string
+          		required:    true
+          		example:     "220d350a742d4adf9b2f49de6e223c82"
+    	responses:
+      		200:
+        		body:
+          			type: PlayerSessions
+        			example:
+          			value: 
+                {
+    				"220d350a742d4adf9b2f49de6e223c82": []
+				 }
+
